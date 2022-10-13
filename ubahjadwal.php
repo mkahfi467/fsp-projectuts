@@ -23,21 +23,20 @@
     $result = $mahasiswa->getMahasiswa();
     //$mahasiswa = new mahasiswa();
     //$result = $mahasiswa->getMahasiswa();
-   
-    if (isset($_POST['ubah']))
-    {
-        $splitNrpNama = explode("-", $_POST['ubah']);
-        $nrp = $splitNrpNama[0];
-        $nama = $splitNrpNama[1];
-        $search = "$nrp";
-    }
-    echo "<form method='POST' action=''>";
-    echo "Mahasiswa : ";
-	echo "$nrp - ";
-    echo "$nama  ";
-    //echo "Keyword: <input type='text' name='keyword' value='$keyword'><br>";
-    //echo "</form>";
 
+    $array_hari_jam = array();
+
+    include_once("jamkuliah.php");
+    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
+    $resultjamkuliah = $jamkuliah->getJamKuliah();
+
+    while ($row1 = $resultjamkuliah->fetch_assoc()) {
+        foreach ($my_array_hari as $value) {
+            array_push($array_hari_jam, $value. "-" .$row1['jam_mulai']);
+        }
+    }
+
+    echo "<form method='POST' action=''>";
     if (isset($_POST['ubah'])){
         $splitNrpNama = explode("-", $_POST['ubah']);
         $nrp = $splitNrpNama[0];
@@ -45,9 +44,54 @@
         $search = "$nrp";
     } else {
         $keyword = "";
+        $nrp = "";
+        $nama = "";
         $search = "%";
         //echo "Hello";
     }
+
+    if (isset($_POST['submit']))
+    {
+        $index = $_POST['check'];
+        $splitNrpNama = explode("-", $_POST['submit']);
+        $nrp = $splitNrpNama[0];
+        $nama = $splitNrpNama[1];
+        $search = "$nrp";
+
+
+        // HAPUS DATA
+        $con = new mysqli("localhost", "root", "", "fsp-project");
+
+	    if ($con->connect_errno)
+	    {
+	    	die("Failed to Connect");
+	    }
+
+	    $sql = "DELETE FROM JADWAL WHERE nrp = ?";
+	    $stmt = $con->prepare($sql);
+	    $stmt->bind_param("i",$nrp);
+    
+	    $stmt->execute();
+        /*
+	    if (!$stmt->error)
+	    	echo "insert Sukses";
+	    else
+	    	echo "insert Gagal";*/
+	    $stmt->close();
+
+        // TAMBAH DATA
+        foreach ($index as $value) {
+            
+        }
+
+	    $con->close();
+    }
+
+    echo "Mahasiswa : ";
+	echo "$nrp -";
+    echo "$nama";
+    //echo "Keyword: <input type='text' name='keyword' value='$keyword'><br>";
+    //echo "</form>";
 
     echo "<table>";
 	echo "<tr>";
@@ -70,18 +114,6 @@
         array_push( $my_array_hari, $row['nama'] );
     }
 
-    $array_hari_jam = array();
-
-    include_once("jamkuliah.php");
-    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
-    $resultjamkuliah = $jamkuliah->getJamKuliah();
-
-    while ($row1 = $resultjamkuliah->fetch_assoc()) {
-        foreach ($my_array_hari as $value) {
-            array_push($array_hari_jam, $value.$row1['jam_mulai']);
-        }
-    }
-
     include_once("jadwal.php");
     $jadwal = new jadwal("localhost", "root", "", "fsp-project");
     $resultjadwal = $jadwal->getJadwal($search);
@@ -89,7 +121,7 @@
     $array_jadwal = array();
 
     while ($row = $resultjadwal->fetch_assoc()) {
-        array_push($array_jadwal, $row['nama'].$row['jam_mulai']);
+        array_push($array_jadwal, $row['nama']. "-" .$row['jam_mulai']);
     }
 
 
@@ -109,18 +141,16 @@
         echo "<td>". $array_jam_kuliah[$x] ."</td>";
         for ($y = 0; $y < 7; $y++) {
             if (in_array($array_hari_jam[($y+($x*7))], $array_jadwal)) {
-                echo "<td><input type='checkbox' checked name='submit' value='Simpan'</td>";
+                echo "<td><input type='checkbox' checked name='check[]' value='". $y+($x*7) ."'</td>";
             } else {
-                echo "<td><input type='checkbox' name='submit' value='Simpan'></td>";
+                echo "<td><input type='checkbox' name='check[]' value='". $y+($x*7) ."'></td>";
             }
-
-            // echo "<td>". ($y+($x*7)) ."</td>";
         }
         echo "</tr>";
     }
 
     echo "</table>";
-    echo "<input type='submit' name='submit' value='Simpan'>";
+    echo "<button type='submit' name='submit' value='". $nrp. "-". $nama ."'>Simpan</button>";
     echo "</form>";
     ?>
 </body>
