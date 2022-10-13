@@ -13,7 +13,6 @@
 	</style>
 </head>
 <body>
-    
     <?php
     include_once("mahasiswa.php");
     //require("koneksi.php");
@@ -35,13 +34,14 @@
     }
 	echo "</select>";
     //echo "Keyword: <input type='text' name='keyword' value='$keyword'><br>";
-    echo "<input type='submit' name='submit' value='Filter'>";
+    echo "<input type='submit' id='btnPilih' name='submit' value='Pilih'>";
     echo "</form>";
 
     if (isset($_POST['submit'])){
-        $nrp = $_POST['nrp'];
+        $splitNrpNama = explode("-", $_POST['nrp']);
+        $nrp = $splitNrpNama[0];
+        $nama = $splitNrpNama[1];
         $search = "$nrp";
-        $nama = $_POST['nama'];
         //echo "Hai";
     } else {
         $keyword = "";
@@ -109,7 +109,7 @@
         echo "<td>". $array_jam_kuliah[$x] ."</td>";
         for ($y = 0; $y < 7; $y++) {
             if (in_array($array_hari_jam[($y+($x*7))], $array_jadwal)) {
-                echo "<td>ADA</td>";
+                echo "<td>&#10004</td>";
             } else {
                 echo "<td></td>";
             }
@@ -120,14 +120,15 @@
     }
 
     echo "</table>";
+    //echo "<form method='POST' action='ubahjadwal.php'>";
+    //echo "<input type='submit' name='submit' value='Ubah Jadwal'>";
+    //echo "</form>";
     ?>
+    <form action="ubahjadwal.php" method="POST">
+        <button type='submit' name='ubah' <?php if (!isset($_POST['submit'])) {echo ' disabled=disabled ';} else {echo 'value = "'. $nrp. '-'. $nama. '"';} ?>>Ubah Jadwal</button>
+    </form>
     
-    <button type='submit' name='ubah' <?php if (!isset($_POST['submit'])) {echo ' disabled=disabled ';} ?>>Ubah Jadwal</button>
-
-    <?php
-    
-    
-    
-    ?>
+    <script type="text/javascript" src="js/jquery-3.6.1.min.js"></script>
+    <script type="text/javascript" src="js/fsp.js"></script>
 </body>
 </html>
