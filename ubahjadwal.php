@@ -14,15 +14,40 @@
 </head>
 <body>
     <?php
-    include_once("mahasiswa.php");
-    //require("koneksi.php");
-    //$koneksi = new koneksi("localhost", "root", "", "fsp-project");
+    echo "<form method='POST' action=''>";
 
-    //$mahasiswa = new mahasiswa("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
-    $mahasiswa = new mahasiswa("localhost", "root", "", "fsp-project");
-    $result = $mahasiswa->getMahasiswa();
-    //$mahasiswa = new mahasiswa();
-    //$result = $mahasiswa->getMahasiswa();
+    if (isset($_POST['ubah'])){
+        $splitNrpNama = explode("-", $_POST['ubah']);
+        $nrp = $splitNrpNama[0];
+        $nama = $splitNrpNama[1];
+        $search = "$nrp";
+    } else {
+        $keyword = "";
+        $nrp = "";
+        $nama = "";
+        $search = "%";
+        //echo "Hello";
+    }
+    // =======================
+    
+    include_once("hari.php");
+    $hari = new hari("localhost", "root", "", "fsp-project");
+    $resulthari = $hari->getHari(); 
+
+    $my_array_hari = array();
+    while($row = $resulthari->fetch_assoc()) {
+        array_push( $my_array_hari, $row['nama'] );
+    }
+
+    include_once("jadwal.php");
+    $jadwal = new jadwal("localhost", "root", "", "fsp-project");
+    $resultjadwal = $jadwal->getJadwal($search);
+
+    $array_jadwal = array();
+
+    while ($row = $resultjadwal->fetch_assoc()) {
+        array_push($array_jadwal, $row['nama']. "-" .$row['jam_mulai']);
+    }
 
     $array_hari_jam = array();
 
@@ -36,19 +61,17 @@
         }
     }
 
-    echo "<form method='POST' action=''>";
-    if (isset($_POST['ubah'])){
-        $splitNrpNama = explode("-", $_POST['ubah']);
-        $nrp = $splitNrpNama[0];
-        $nama = $splitNrpNama[1];
-        $search = "$nrp";
-    } else {
-        $keyword = "";
-        $nrp = "";
-        $nama = "";
-        $search = "%";
-        //echo "Hello";
+    include_once("jamkuliah.php");
+    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
+    $resultjamkuliah = $jamkuliah->getJamKuliah();
+
+    $array_jam_kuliah = array();
+
+    while ($row1 = $resultjamkuliah->fetch_assoc()) {
+        array_push($array_jam_kuliah, $row1['jam_mulai']." - ".$row1['jam_selesai']);
     }
+
+    // =======================
 
     if (isset($_POST['submit']))
     {
@@ -79,8 +102,39 @@
 	    	echo "insert Gagal";*/
 	    $stmt->close();
 
-        // TAMBAH DATA
+        $newIndexJadwalHari = array();
+        $newIndexJadwalJam = array();
 
+        // TAMBAH DATA
+        foreach ($index as $value) {
+            $splitHariJam = explode("-", $array_hari_jam[$value]);
+            $hari = $splitHariJam[0];
+            $jam = $splitHariJam[1];
+            for ($x = 0; $x < count($my_array_hari); $x++) {
+                if ($my_array_hari[$x] == $hari) {
+                    array_push($newIndexJadwalHari, $x+1);
+                }
+            }
+            for ($y = 0; $y < count($array_jam_kuliah); $y++) {
+                $splitingJamMulai = explode(" - ", $array_jam_kuliah[$y]);
+                $jamMulai = $splitingJamMulai[0];
+                if ($jamMulai == $jam) {
+                    array_push($newIndexJadwalJam, $y+1);
+                }
+            }
+        }
+
+        for ($x = 0; $x < count($newIndexJadwalHari); $x++) {
+            /*echo $nrp;
+            echo $newIndexJadwalHari[$x];
+            echo $newIndexJadwalJam[$x];*/
+            
+            $sql = "INSERT INTO jadwal (nrp, idhari, idjam_kuliah) VALUES (?,?,?)";
+	        $stmt = $con->prepare($sql);
+	        $stmt->bind_param("iii",$nrp,$newIndexJadwalHari[$x],$newIndexJadwalJam[$x]);
+	        $stmt->execute();
+            $stmt->close();
+        }
 	    $con->close();
     }
 
@@ -101,15 +155,6 @@
 	echo "<th>Jumat</th>";
 	echo "<th>Sabtu</th>";
 	echo "</tr>";
-    
-    include_once("hari.php");
-    $hari = new hari("localhost", "root", "", "fsp-project");
-    $resulthari = $hari->getHari(); 
-
-    $my_array_hari = array();
-    while($row = $resulthari->fetch_assoc()) {
-        array_push( $my_array_hari, $row['nama'] );
-    }
 
     include_once("jadwal.php");
     $jadwal = new jadwal("localhost", "root", "", "fsp-project");
@@ -120,19 +165,7 @@
     while ($row = $resultjadwal->fetch_assoc()) {
         array_push($array_jadwal, $row['nama']. "-" .$row['jam_mulai']);
     }
-
-
-
-    include_once("jamkuliah.php");
-    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
-    $resultjamkuliah = $jamkuliah->getJamKuliah();
-
-    $array_jam_kuliah = array();
-
-    while ($row1 = $resultjamkuliah->fetch_assoc()) {
-        array_push($array_jam_kuliah, $row1['jam_mulai']." - ".$row1['jam_selesai']);
-    }
-
+    
     for ($x = 0; $x < count($array_jam_kuliah); $x++) {
         echo "<tr>";
         echo "<td>". $array_jam_kuliah[$x] ."</td>";

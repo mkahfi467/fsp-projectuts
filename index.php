@@ -78,7 +78,7 @@
 
     while ($row1 = $resultjamkuliah->fetch_assoc()) {
         foreach ($my_array_hari as $value) {
-            array_push($array_hari_jam, $value.$row1['jam_mulai']);
+            array_push($array_hari_jam, $value. "-" .$row1['jam_mulai']);
         }
     }
 
@@ -89,7 +89,7 @@
     $array_jadwal = array();
 
     while ($row = $resultjadwal->fetch_assoc()) {
-        array_push($array_jadwal, $row['nama'].$row['jam_mulai']);
+        array_push($array_jadwal, $row['nama']. "-" .$row['jam_mulai']);
     }
 
 
