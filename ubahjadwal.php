@@ -80,9 +80,6 @@
 	    $stmt->close();
 
         // TAMBAH DATA
-        foreach ($index as $value) {
-            
-        }
 
 	    $con->close();
     }
