@@ -29,9 +29,23 @@
     echo "Mahasiswa : ";
 	echo "<select name='nrp'>";
     echo "<option value=''>-- Pilih Mahasiswa --</option>";
-	while ($row = $result->fetch_assoc()) {
-        echo "<option value='". $row['nrp'] . "-". $row['nama'] ."'>". $row['nama'] ."</option>";
-    }
+
+
+	while ($row = $result->fetch_assoc()){?>
+        <!-- <option value='". $row['nrp'] . "-". $row['nama'] ."'>". $row['nama'] ."</option>; -->
+        <option value="<?= $row['nrp'] . "-". $row['nama'] ?>"
+        <?php
+        if (isset($_POST['nrp'])) {
+            if ($_POST['nrp'] == ($row['nrp'] . "-". $row['nama'])) {
+                echo "selected";
+            }
+        }
+        ?>
+        > <?= $row['nama']?> </option>
+    <?php }?>
+
+
+    <?php
 	echo "</select>";
     //echo "Keyword: <input type='text' name='keyword' value='$keyword'><br>";
     echo "<input type='submit' id='btnPilih' name='submit' value='Pilih'>";
