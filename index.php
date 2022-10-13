@@ -16,10 +16,10 @@
     <?php
     include_once("mahasiswa.php");
     //require("koneksi.php");
-    //$koneksi = new koneksi("localhost", "root", "", "fsp-project");
+    //$koneksi = new koneksi("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
 
     //$mahasiswa = new mahasiswa("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
-    $mahasiswa = new mahasiswa("localhost", "root", "", "fsp-project");
+    $mahasiswa = new mahasiswa("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $result = $mahasiswa->getMahasiswa();
     //$mahasiswa = new mahasiswa();
     //$result = $mahasiswa->getMahasiswa();
@@ -76,7 +76,7 @@
 	echo "</tr>";
     
     include_once("hari.php");
-    $hari = new hari("localhost", "root", "", "fsp-project");
+    $hari = new hari("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resulthari = $hari->getHari(); 
 
     $my_array_hari = array();
@@ -87,7 +87,7 @@
     $array_hari_jam = array();
 
     include_once("jamkuliah.php");
-    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
+    $jamkuliah = new jamkuliah("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resultjamkuliah = $jamkuliah->getJamKuliah();
 
     while ($row1 = $resultjamkuliah->fetch_assoc()) {
@@ -97,7 +97,7 @@
     }
 
     include_once("jadwal.php");
-    $jadwal = new jadwal("localhost", "root", "", "fsp-project");
+    $jadwal = new jadwal("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resultjadwal = $jadwal->getJadwal($search);
 
     $array_jadwal = array();
@@ -109,7 +109,7 @@
 
 
     include_once("jamkuliah.php");
-    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
+    $jamkuliah = new jamkuliah("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resultjamkuliah = $jamkuliah->getJamKuliah();
 
     $array_jam_kuliah = array();

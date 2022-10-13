@@ -31,7 +31,7 @@
     // =======================
     
     include_once("hari.php");
-    $hari = new hari("localhost", "root", "", "fsp-project");
+    $hari = new hari("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resulthari = $hari->getHari(); 
 
     $my_array_hari = array();
@@ -40,7 +40,7 @@
     }
 
     include_once("jadwal.php");
-    $jadwal = new jadwal("localhost", "root", "", "fsp-project");
+    $jadwal = new jadwal("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resultjadwal = $jadwal->getJadwal($search);
 
     $array_jadwal = array();
@@ -52,7 +52,7 @@
     $array_hari_jam = array();
 
     include_once("jamkuliah.php");
-    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
+    $jamkuliah = new jamkuliah("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resultjamkuliah = $jamkuliah->getJamKuliah();
 
     while ($row1 = $resultjamkuliah->fetch_assoc()) {
@@ -62,7 +62,7 @@
     }
 
     include_once("jamkuliah.php");
-    $jamkuliah = new jamkuliah("localhost", "root", "", "fsp-project");
+    $jamkuliah = new jamkuliah("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resultjamkuliah = $jamkuliah->getJamKuliah();
 
     $array_jam_kuliah = array();
@@ -83,14 +83,14 @@
 
 
         // HAPUS DATA
-        $con = new mysqli("localhost", "root", "", "fsp-project");
+        $con = new mysqli("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
 
 	    if ($con->connect_errno)
 	    {
 	    	die("Failed to Connect");
 	    }
 
-	    $sql = "DELETE FROM JADWAL WHERE nrp = ?";
+	    $sql = "DELETE FROM jadwal WHERE nrp = ?";
 	    $stmt = $con->prepare($sql);
 	    $stmt->bind_param("i",$nrp);
     
@@ -157,7 +157,7 @@
 	echo "</tr>";
 
     include_once("jadwal.php");
-    $jadwal = new jadwal("localhost", "root", "", "fsp-project");
+    $jadwal = new jadwal("localhost", "id19689568_user", "M.kahfi.12345", "id19689568_db_fsp");
     $resultjadwal = $jadwal->getJadwal($search);
 
     $array_jadwal = array();
@@ -171,9 +171,11 @@
         echo "<td>". $array_jam_kuliah[$x] ."</td>";
         for ($y = 0; $y < 7; $y++) {
             if (in_array($array_hari_jam[($y+($x*7))], $array_jadwal)) {
-                echo "<td><input type='checkbox' checked name='check[]' value='". $y+($x*7) ."'</td>";
+                $indexKotak = $y+($x*7);
+                echo "<td><input type='checkbox' checked name='check[]' value='". $indexKotak ."'</td>";
             } else {
-                echo "<td><input type='checkbox' name='check[]' value='". $y+($x*7) ."'></td>";
+                $indexKotak = $y+($x*7);
+                echo "<td><input type='checkbox' name='check[]' value='". $indexKotak ."'></td>";
             }
         }
         echo "</tr>";
